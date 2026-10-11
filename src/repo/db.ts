@@ -32,9 +32,34 @@ db.exec(`
     status TEXT NOT NULL DEFAULT 'WAITING', -- 'WAITING', 'IN_PROGRESS', 'WHITE_WON', 'BLACK_WON', 'DRAW'
     end_reason TEXT, -- 'CHECKMATE', 'STALEMATE', 'RESIGNATION', 'DRAW_RULE'
     code_used INTEGER NOT NULL DEFAULT 0,
+    white_elo_before INTEGER,
+    black_elo_before INTEGER,
+    white_elo_after INTEGER,
+    black_elo_after INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY(host_id) REFERENCES users(id),
     FOREIGN KEY(white_player_id) REFERENCES users(id),
     FOREIGN KEY(black_player_id) REFERENCES users(id)
   );
 `);
+
+// Bases déjà créées avant le récit 6 : les colonnes de classement sont ajoutées
+// sans recréer la table (CREATE TABLE IF NOT EXISTS ne les ajouterait pas).
+for (const colonne of ['white_elo_before', 'black_elo_before', 'white_elo_after', 'black_elo_after']) {
+  const existantes = db.prepare('PRAGMA table_info(games)').all() as { name: string }[];
+  if (!existantes.some((c) => c.name === colonne)) {
+    db.exec(`ALTER TABLE games ADD COLUMN ${colonne} INTEGER`);
+  }
+}
+
+export function withTransaction<T>(action: () => T): T {
+  db.exec('BEGIN IMMEDIATE');
+  try {
+    const resultat = action();
+    db.exec('COMMIT');
+    return resultat;
+  } catch (error) {
+    db.exec('ROLLBACK');
+    throw error;
+  }
+}

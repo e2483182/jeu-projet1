@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { gameRepository } from '../repo/game';
+import { vuePartie } from '../partie/vue';
 import { Chess } from 'chess.js';
 import crypto from 'node:crypto';
 
@@ -38,14 +39,10 @@ roomRouter.get('/api/games/:id', (req: Request, res: Response) => {
     (game.status === 'WAITING' && userId === game.host_id);
   if (!estParticipant) return res.status(403).json({ error: "Vous ne participez pas à cette partie" });
 
+  // L'adversaire interroge cette route : il y voit le coup, puis le résultat
+  // et les deux classements dès que la partie est terminée.
   res.json({
-    gameId: game.id,
-    status: game.status,
-    endReason: game.end_reason,
+    ...vuePartie(game),
     code: game.status === 'WAITING' && userId === game.host_id ? game.code : null,
-    fen: game.fen,
-    moves: JSON.parse(game.moves),
-    whitePlayerId: game.white_player_id,
-    blackPlayerId: game.black_player_id
   });
 });

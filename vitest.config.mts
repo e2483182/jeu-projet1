@@ -8,6 +8,7 @@ export default defineConfig({
     env: {
       NODE_ENV: 'test',
       DATABASE_PATH: ':memory:',
+      SESSION_SECRET: 'test-only-session-secret',
     },
     server: {
       // node:sqlite est un module Node natif encore expérimental ; Vite ne le

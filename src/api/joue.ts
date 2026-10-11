@@ -1,5 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { Chess } from 'chess.js';
+import { ErreurHttp } from '../erreurHttp';
+import { cloturerPartie } from '../partie/cloture';
+import { vuePartie } from '../partie/vue';
 import { gameRepository } from '../repo/game';
 
 export const moveRouter = Router();
@@ -70,19 +73,32 @@ moveRouter.post('/api/games/:id/moves', (req: Request, res: Response) => {
   const moves: string[] = JSON.parse(game.moves);
   moves.push(coupJoue.san);
 
-  gameRepository.updateGameState(
-    game.id,
-    chess.fen(),
-    JSON.stringify(moves),
-    fin ? fin.status : 'IN_PROGRESS',
-    fin ? fin.endReason : null
-  );
+  // Récit 6 : mat ou nulle → la partie se termine et les deux Elo sont recalculés.
+  if (fin) {
+    try {
+      const terminee = cloturerPartie(game.id, {
+        status: fin.status,
+        endReason: fin.endReason,
+        fen: chess.fen(),
+        moves,
+      });
+      return res.status(200).json({ ...vuePartie(terminee), turn: null });
+    } catch (error) {
+      if (error instanceof ErreurHttp) {
+        return res.status(error.statusCode).json({ error: error.message });
+      }
+      throw error;
+    }
+  }
 
+  const enregistree = gameRepository.savePosition(game.id, chess.fen(), JSON.stringify(moves));
+  if (!enregistree) {
+    return res.status(409).json({ error: 'Cette partie est terminée' });
+  }
+
+  const miseAJour = gameRepository.findById(game.id)!;
   res.status(200).json({
-    fen: chess.fen(),
-    moves,
-    status: fin ? fin.status : 'IN_PROGRESS',
-    endReason: fin ? fin.endReason : null,
-    turn: chess.turn() === 'w' ? 'white' : 'black'
+    ...vuePartie(miseAJour),
+    turn: chess.turn() === 'w' ? 'white' : 'black',
   });
 });
