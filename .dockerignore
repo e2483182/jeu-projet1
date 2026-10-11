@@ -1,0 +1,9 @@
+node_modules/
+build/
+dist/
+.git/
+.env
+deploy/.env
+data/
+coverage/
+tests/

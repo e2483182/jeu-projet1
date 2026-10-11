@@ -1,0 +1,16 @@
+services:
+  echecs:
+    image: ghcr.io/${GHCR_OWNER}/${IMAGE_NAME}:${IMAGE_TAG}
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_PATH: /app/data/chess.db
+      SESSION_SECRET: ${SESSION_SECRET:?Définissez SESSION_SECRET dans deploy/.env}
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - donnees-echecs:/app/data
+
+volumes:
+  donnees-echecs:
