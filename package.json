@@ -5,9 +5,9 @@
   "private": true,
   "main": "server.mjs",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node server.mjs",
+    "dev": "cross-env NODE_ENV=development node --env-file=.env server.mjs",
     "build": "react-router build && node scripts/mark-esm.cjs",
-    "start": "node server.mjs",
+    "start": "node --env-file=.env server.mjs",
     "test": "vitest run",
     "typecheck": "react-router typegen && tsc -p tsconfig.frontend.json --noEmit"
   },
