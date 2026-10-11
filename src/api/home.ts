@@ -4,6 +4,17 @@ import { userRepository } from '../repo/user';
 
 export const authRouter = Router();
 
+function echapperHtml(texte: string): string {
+  const caracteresHtml: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+  return texte.replace(/[&<>"']/g, (caractere) => caracteresHtml[caractere]);
+}
+
 interface GithubUser {
   id: string;
   login: string;
@@ -59,6 +70,15 @@ authRouter.get('/auth/github', (req: Request, res: Response) => {
   return res.redirect(githubUrl.href);
 });
 
+authRouter.get('/', (req: Request, res: Response) => {
+  const user = req.session?.userId ? userRepository.findById(req.session.userId) : undefined;
+  const contenu = user
+    ? `<h1>Échecs en ligne</h1><p>Connexion réussie pour <strong>${echapperHtml(user.username)}</strong>.</p><p>Classement Elo : ${user.elo}</p>`
+    : '<h1>Échecs en ligne</h1><p>Connectez-vous avec GitHub pour jouer.</p><p><a href="/auth/github">Se connecter avec GitHub</a></p>';
+
+  return res.type('html').send(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Échecs en ligne</title></head><body><main>${contenu}</main></body></html>`);
+});
+
 // Callback GitHub OAuth
 authRouter.get('/auth/github/callback', async (req: Request, res: Response) => {
   const { code, state } = req.query;
@@ -82,7 +102,7 @@ authRouter.get('/auth/github/callback', async (req: Request, res: Response) => {
     }
 
     req.session!.userId = user.id;
-    return res.redirect('/dashboard');
+    return res.redirect('/');
   } catch {
     return res.status(502).json({ error: 'Connexion GitHub impossible' });
   }
