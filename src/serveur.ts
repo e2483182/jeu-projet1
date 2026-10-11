@@ -1,5 +1,6 @@
 import express from 'express';
 import session from 'express-session';
+import { authRouter } from './api/home';
 import { roomRouter } from './api/partie';
 import { joinRouter } from './api/join';
 import { moveRouter } from './api/joue';
@@ -19,6 +20,7 @@ export function createApp() {
     })
   );
 
+  app.use(authRouter);
   app.use(roomRouter);
   app.use(joinRouter);
   app.use(moveRouter);

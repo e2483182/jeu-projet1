@@ -60,6 +60,6 @@ export const gameRepository = {
       WHERE (white_player_id = ? OR black_player_id = ?) AND status != 'WAITING'
       ORDER BY created_at DESC
     `);
-    return stmt.all(userId, userId) as GameRow[];
+    return stmt.all(userId, userId) as unknown as GameRow[];
   }
 };
