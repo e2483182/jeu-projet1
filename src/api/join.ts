@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { gameRepository } from '../repo/game';
+import { userRepository } from '../repo/user';
 
 export const joinRouter = Router();
 
@@ -25,12 +26,22 @@ joinRouter.post('/api/rooms/join', (req: Request, res: Response) => {
     return res.status(400).json({ error: 'Vous ne pouvez pas rejoindre votre propre partie' });
   }
 
+  const hote = userRepository.findById(game.host_id);
+  const invite = userRepository.findById(userId);
+  if (!hote || !invite) return res.status(500).json({ error: 'Joueurs introuvables' });
+
   // Tirage au sort des couleurs entre l'hôte et le joueur qui rejoint.
+  // Les Elo sont figés ici : le calcul de fin de partie s'appuie sur ces valeurs.
   const hoteEstBlanc = Math.random() < 0.5;
   const whitePlayerId = hoteEstBlanc ? game.host_id : userId;
   const blackPlayerId = hoteEstBlanc ? userId : game.host_id;
+  const whiteElo = hoteEstBlanc ? hote.elo : invite.elo;
+  const blackElo = hoteEstBlanc ? invite.elo : hote.elo;
 
-  gameRepository.joinGame(game.id, whitePlayerId, blackPlayerId);
+  const rejoint = gameRepository.joinGame(game.id, whitePlayerId, blackPlayerId, whiteElo, blackElo);
+  if (!rejoint) {
+    return res.status(409).json({ error: 'Ce code a déjà été utilisé' });
+  }
 
   const couleurDuJoueur = userId === whitePlayerId ? 'white' : 'black';
 

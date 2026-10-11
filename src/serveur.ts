@@ -4,6 +4,8 @@ import { authRouter } from './api/home';
 import { roomRouter } from './api/partie';
 import { joinRouter } from './api/join';
 import { moveRouter } from './api/joue';
+import { abandonRouter } from './api/abandon';
+import { historiqueRouter } from './api/historique';
 import { devAuthRouter } from './api/devAuth';
 
 // Construit l'application Express sans la démarrer, pour pouvoir la réutiliser
@@ -36,6 +38,8 @@ export function createApp() {
   app.use(roomRouter);
   app.use(joinRouter);
   app.use(moveRouter);
+  app.use(abandonRouter);
+  app.use(historiqueRouter);
 
   // Route de connexion factice réservée aux tests, jamais montée ailleurs.
   if (process.env.NODE_ENV === 'test') {
