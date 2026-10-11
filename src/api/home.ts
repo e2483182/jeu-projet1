@@ -43,17 +43,31 @@ async function fetchGithubProfile(code: string): Promise<GithubUser> {
 
 // Redirection vers GitHub
 authRouter.get('/auth/github', (req: Request, res: Response) => {
-  const redirectUri = `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}`;
-  res.redirect(redirectUri);
+  const clientId = process.env.GITHUB_CLIENT_ID;
+  const callbackUrl = process.env.GITHUB_CALLBACK_URL;
+  if (!clientId || !callbackUrl) {
+    return res.status(500).json({ error: 'Configuration GitHub incomplète' });
+  }
+
+  const state = crypto.randomBytes(32).toString('hex');
+  req.session!.oauthState = state;
+
+  const githubUrl = new URL('https://github.com/login/oauth/authorize');
+  githubUrl.searchParams.set('client_id', clientId);
+  githubUrl.searchParams.set('redirect_uri', callbackUrl);
+  githubUrl.searchParams.set('state', state);
+  return res.redirect(githubUrl.href);
 });
 
 // Callback GitHub OAuth
 authRouter.get('/auth/github/callback', async (req: Request, res: Response) => {
-  const { code } = req.query;
+  const { code, state } = req.query;
 
-  if (typeof code !== 'string' || !code) {
-    return res.status(400).json({ error: 'Code GitHub manquant' });
+  if (typeof code !== 'string' || !code || typeof state !== 'string' || state !== req.session?.oauthState) {
+    delete req.session?.oauthState;
+    return res.status(400).json({ error: 'Retour OAuth invalide' });
   }
+  delete req.session?.oauthState;
 
   try {
     const githubUser = await fetchGithubProfile(code);
