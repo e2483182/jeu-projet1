@@ -3,6 +3,7 @@ import { db } from './db';
 export interface GameRow {
   id: string;
   code: string;
+  host_id: string;
   white_player_id: string | null;
   black_player_id: string | null;
   fen: string;
@@ -15,8 +16,10 @@ export interface GameRow {
 
 export const gameRepository = {
   create(game: { id: string; code: string; hostId: string; initialFen: string }): GameRow {
+    // Les couleurs ne sont pas encore connues : elles sont tirées au sort
+    // quand l'adversaire rejoint (voir joinGame ci-dessous).
     const stmt = db.prepare(`
-      INSERT INTO games (id, code, white_player_id, fen, moves, status, code_used)
+      INSERT INTO games (id, code, host_id, fen, moves, status, code_used)
       VALUES (?, ?, ?, ?, '[]', 'WAITING', 0)
     `);
     stmt.run(game.id, game.code, game.hostId, game.initialFen);
@@ -33,7 +36,7 @@ export const gameRepository = {
     return stmt.get(id) as GameRow | undefined;
   },
 
-  joinGame(gameId: string, guestId: string, whitePlayerId: string, blackPlayerId: string): void {
+  joinGame(gameId: string, whitePlayerId: string, blackPlayerId: string): void {
     const stmt = db.prepare(`
       UPDATE games 
       SET white_player_id = ?, black_player_id = ?, status = 'IN_PROGRESS', code_used = 1 
