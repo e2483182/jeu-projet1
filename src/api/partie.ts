@@ -32,13 +32,17 @@ roomRouter.get('/api/games/:id', (req: Request, res: Response) => {
   const game = gameRepository.findById(req.params.id);
   if (!game) return res.status(404).json({ error: 'Partie introuvable' });
 
-  const estParticipant = userId === game.white_player_id || userId === game.black_player_id;
+  const estParticipant =
+    userId === game.white_player_id ||
+    userId === game.black_player_id ||
+    (game.status === 'WAITING' && userId === game.host_id);
   if (!estParticipant) return res.status(403).json({ error: "Vous ne participez pas à cette partie" });
 
   res.json({
     gameId: game.id,
     status: game.status,
     endReason: game.end_reason,
+    code: game.status === 'WAITING' && userId === game.host_id ? game.code : null,
     fen: game.fen,
     moves: JSON.parse(game.moves),
     whitePlayerId: game.white_player_id,

@@ -1,7 +1,15 @@
 import { DatabaseSync } from 'node:sqlite';
 import path from 'node:path';
+import fs from 'node:fs';
 
-const dbPath = process.env.DATABASE_PATH || path.join(__dirname, '../../data/chess.db');
+// On utilise process.cwd() plutôt que __dirname : ce fichier est aussi empaqueté
+// en ESM par Vite pour le rendu côté serveur, où __dirname n'existe pas.
+// Les scripts npm et le conteneur Docker démarrent toujours depuis la racine du projet.
+const dbPath = process.env.DATABASE_PATH || path.join(process.cwd(), 'data/chess.db');
+
+// Le dossier (ex: le point de montage du volume Docker) doit exister avant d'ouvrir le fichier.
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+
 export const db = new DatabaseSync(dbPath);
 
 // Initialisation du schéma

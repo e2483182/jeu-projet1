@@ -41,6 +41,19 @@ describe("Récit 3 : rejoindre une partie privée avec un code", () => {
     expect(etat.body.whitePlayerId).not.toBe(etat.body.blackPlayerId);
   });
 
+  it("permet à l'hôte de consulter sa partie pendant l'attente de l'adversaire", async () => {
+    const { hote } = await creerDeuxJoueursConnectes(app);
+    const creation = await hote.post('/api/rooms/create');
+
+    const etat = await hote.get(`/api/games/${creation.body.gameId}`);
+
+    expect(etat.status).toBe(200);
+    expect(etat.body.status).toBe('WAITING');
+    expect(etat.body.code).toBe(creation.body.code);
+    expect(etat.body.whitePlayerId).toBeNull();
+    expect(etat.body.blackPlayerId).toBeNull();
+  });
+
   it("refuse un code inconnu avec un message clair", async () => {
     const { invite } = await creerDeuxJoueursConnectes(app);
 

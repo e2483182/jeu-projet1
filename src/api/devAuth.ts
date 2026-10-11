@@ -3,8 +3,8 @@ import crypto from 'node:crypto';
 import { userRepository } from '../repo/user';
 
 // Cette route simule une connexion réussie sans passer par GitHub.
-// Elle tient lieu de récit 1 (le vrai GitHub OAuth n'est pas implémenté dans
-// ce projet) et sert aussi aux tests d'intégration de l'API.
+// Elle est réservée au développement et aux tests ; elle ne doit jamais
+// remplacer l'authentification réelle en production.
 export const devAuthRouter = Router();
 
 devAuthRouter.post('/api/dev/login', (req: Request, res: Response) => {

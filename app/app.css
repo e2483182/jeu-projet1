@@ -1,0 +1,159 @@
+/* Styles minimalistes, sans dépendance externe (pas de framework CSS). */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  background: #f4f1ec;
+  color: #222;
+}
+
+.conteneur {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+.carte {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.ligne {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+input[type='text'] {
+  padding: 0.5rem;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  background: #2f6f4f;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #9bb3a8;
+  cursor: not-allowed;
+}
+
+button.secondaire {
+  background: #555;
+}
+
+.erreur {
+  color: #b00020;
+  font-weight: 600;
+}
+
+.code-partie {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  background: #eef7f0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.trace {
+  overflow-x: auto;
+  background: #f4f1ec;
+  padding: 1rem;
+}
+
+/* Échiquier */
+
+.echiquier {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  width: min(90vw, 480px);
+  height: min(90vw, 480px);
+  border: 2px solid #333;
+  user-select: none;
+}
+
+.case {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: min(8vw, 2.5rem);
+  cursor: default;
+  position: relative;
+}
+
+.case.claire {
+  background: #eedcc0;
+}
+
+.case.sombre {
+  background: #8a6340;
+}
+
+.case.jouable {
+  cursor: pointer;
+}
+
+.case.jouable::after {
+  content: '';
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.case.selectionnee {
+  outline: 3px solid #2f6f4f;
+  outline-offset: -3px;
+}
+
+.case.possede-piece.jouable {
+  cursor: pointer;
+}
+
+.promotion {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.promotion-choix {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.promotion-choix button {
+  font-size: 1.5rem;
+  background: #eee;
+  color: #222;
+}
