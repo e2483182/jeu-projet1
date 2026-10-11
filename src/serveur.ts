@@ -4,6 +4,7 @@ import { authRouter } from './api/home';
 import { roomRouter } from './api/partie';
 import { joinRouter } from './api/join';
 import { moveRouter } from './api/joue';
+import { profilRouter } from './api/profil';
 import { abandonRouter } from './api/abandon';
 import { historiqueRouter } from './api/historique';
 import { devAuthRouter } from './api/devAuth';
@@ -34,6 +35,7 @@ export function createApp() {
     })
   );
 
+  app.use(profilRouter);
   app.use(authRouter);
   app.use(roomRouter);
   app.use(joinRouter);
@@ -41,20 +43,11 @@ export function createApp() {
   app.use(abandonRouter);
   app.use(historiqueRouter);
 
-  // Route de connexion factice réservée aux tests, jamais montée ailleurs.
-  if (process.env.NODE_ENV === 'test') {
+  // La connexion factice est uniquement disponible en développement et dans
+  // les tests. Elle ne doit pas permettre d'usurper un compte en production.
+  if (process.env.NODE_ENV !== 'production') {
     app.use(devAuthRouter);
   }
 
   return app;
-}
-
-// Démarre réellement le serveur seulement si ce fichier est exécuté directement
-// (et non lorsqu'il est importé par les tests).
-if (require.main === module) {
-  const app = createApp();
-  const port = process.env.PORT ? Number(process.env.PORT) : 3000;
-  app.listen(port, () => {
-    console.log(`Serveur démarré sur le port ${port}`);
-  });
 }

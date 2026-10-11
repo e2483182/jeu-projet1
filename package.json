@@ -3,23 +3,34 @@
   "version": "1.0.0",
   "description": "Partie d'échecs en ligne à deux joueurs",
   "private": true,
-  "main": "dist/serveur.js",
+  "main": "server.mjs",
   "scripts": {
-    "dev": "tsx watch src/serveur.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/serveur.js",
-    "test": "vitest run"
+    "dev": "cross-env NODE_ENV=development node server.mjs",
+    "build": "react-router build && node scripts/mark-esm.cjs",
+    "start": "node server.mjs",
+    "test": "vitest run",
+    "typecheck": "react-router typegen && tsc -p tsconfig.frontend.json --noEmit"
   },
   "dependencies": {
     "chess.js": "^1.0.0",
-    "express": "^4.19.2",
-    "express-session": "^1.18.0"
+    "express": "^4.22.3",
+    "express-session": "^1.18.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "react-router": "^8.4.0",
+    "isbot": "^5"
   },
   "devDependencies": {
+    "@react-router/dev": "^8.4.0",
+    "@react-router/express": "^8.4.0",
+    "@react-router/node": "^8.4.0",
     "@types/express": "^4.17.21",
     "@types/express-session": "^1.18.0",
     "@types/node": "^24.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@types/supertest": "^6.0.2",
+    "cross-env": "^10.1.0",
     "supertest": "^7.0.0",
     "tsx": "^4.19.0",
     "typescript": "^5.5.4",

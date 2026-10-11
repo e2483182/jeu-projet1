@@ -3,8 +3,8 @@ import crypto from 'node:crypto';
 import { userRepository } from '../repo/user';
 
 // Cette route simule une connexion réussie sans passer par GitHub.
-// Elle n'est montée que lorsque NODE_ENV === 'test' (voir src/serveur.ts) et
-// sert uniquement aux tests d'intégration de l'API.
+// Elle est réservée au développement et aux tests ; elle ne doit jamais
+// remplacer l'authentification réelle en production.
 export const devAuthRouter = Router();
 
 devAuthRouter.post('/api/dev/login', (req: Request, res: Response) => {
