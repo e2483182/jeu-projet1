@@ -25,9 +25,10 @@ npm install
 npm run dev
 ```
 
-Ouvrez <http://localhost:3000>. En développement, entrez un nom pour vous
-connecter. Cette connexion factice n'est activée qu'en développement et en
-test ; l'authentification GitHub OAuth réelle n'est pas encore implémentée.
+Ouvrez <http://localhost:3000>. Configurez `SESSION_SECRET`,
+`GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` et `GITHUB_CALLBACK_URL` dans
+l'environnement du serveur pour activer la connexion GitHub OAuth. L'URL de
+rappel doit correspondre à celle enregistrée dans l'application OAuth GitHub.
 Pour lancer les tests d'intégration de l'API :
 
 ```powershell
@@ -44,8 +45,10 @@ Le serveur de déploiement n'a besoin que de Docker avec le plugin Docker
 Compose. Il télécharge une image déjà publiée sur GitHub Container Registry ;
 le fichier Compose ne construit pas l'image.
 
-1. Dans le dépôt, construisez et publiez une image Docker sur GHCR (ou utilisez
-   une image publiée par le pipeline de CI).
+1. Le workflow GitHub Actions vérifie les tests, les types et le build sur les
+   pull requests vers `main`. Après un push sur `main` ou d'un tag `v*`, il
+   publie l'image sur GHCR avec un tag `sha-<SHA complet>` (ainsi que les tags
+   de branche ou de version).
 2. Sur la machine de déploiement, placez `deploy/compose.yml` et créez un
    fichier `deploy/.env` à partir de `deploy/.env.example`.
 3. Dans `deploy/.env`, vérifiez `GHCR_OWNER`, `IMAGE_NAME` et `IMAGE_TAG`, puis
@@ -78,10 +81,13 @@ docker build -t ghcr.io/e2483182/jeu-projet1:latest .
 docker push ghcr.io/e2483182/jeu-projet1:latest
 ```
 
+Le tag Git `v1` préexistant précède l'ajout du workflow CI. Après la fusion du
+workflow, lancez-le manuellement depuis **Actions → CI and publish container →
+Run workflow**, en choisissant `main` comme branche et `v1` comme `image_ref`.
+La validation s'exécute sur `main`, puis l'image du commit pointé par `v1` est
+publiée sous `ghcr.io/e2483182/jeu-projet1:sha-<SHA complet du commit v1>`.
+
 ### Limitation connue
 
-La connexion GitHub OAuth (récit 1) n'est pas implémentée. En production, la
-connexion factice est désactivée pour empêcher l'usurpation de compte ; la
-page l'indique et le jeu ne peut pas encore être utilisé avant l'ajout du vrai
-flux OAuth. Les variables OAuth ne sont donc pas demandées dans `.env` tant que
-ce flux n'existe pas.
+L'expérience de jeu dépend des routes et de l'API disponibles dans l'application ;
+la connexion OAuth seule ne crée pas de partie automatiquement.

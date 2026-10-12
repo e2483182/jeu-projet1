@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { attendu, mettreAJourClassements, nouvelElo } from '../src/elo';
+import { attendu, mettreAJourClassements, nouvelElo } from '../../src/elo';
 
 describe('Récit 6 : formule Elo', () => {
   it('deux joueurs à 1000 : victoire +10, défaite -10, nulle inchangée', () => {
