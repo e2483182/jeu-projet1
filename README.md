@@ -81,11 +81,11 @@ docker build -t ghcr.io/e2483182/jeu-projet1:latest .
 docker push ghcr.io/e2483182/jeu-projet1:latest
 ```
 
-Le tag Git `v1` préexistant précède l'ajout du workflow CI. Après la fusion du
-workflow, lancez-le manuellement depuis **Actions → CI and publish container →
-Run workflow**, en choisissant `main` comme branche et `v1` comme `image_ref`.
-La validation s'exécute sur `main`, puis l'image du commit pointé par `v1` est
-publiée sous `ghcr.io/e2483182/jeu-projet1:sha-<SHA complet du commit v1>`.
+Pour la remise, placez le tag Git `v1` sur le commit final après la fusion du
+workflow CI. La poussée de ce tag exécute les validations et publie l'image de
+ce même commit sous
+`ghcr.io/e2483182/jeu-projet1:sha-<SHA complet du commit v1>`. Si `v1` existe
+déjà sur un ancien commit, vérifiez le commit cible avant de déplacer le tag.
 
 ### Limitation connue
 
