@@ -8,6 +8,11 @@ export function loader({ context }: Route.LoaderArgs) {
   return {
     utilisateur: context.get(utilisateurContext),
     connexionDisponible: process.env.NODE_ENV !== 'production',
+    connexionGithubDisponible: Boolean(
+      process.env.GITHUB_CLIENT_ID &&
+        process.env.GITHUB_CLIENT_SECRET &&
+        process.env.GITHUB_CALLBACK_URL,
+    ),
   };
 }
 
@@ -86,6 +91,11 @@ export default function Accueil({ loaderData }: Route.ComponentProps) {
           <h2>Connexion</h2>
           {loaderData.connexionDisponible ? (
             <>
+              {loaderData.connexionGithubDisponible && (
+                <p>
+                  <a href="/auth/github">Se connecter avec GitHub</a>
+                </p>
+              )}
               <p>Mode développement : entrez un nom pour vous identifier.</p>
               <form className="ligne" onSubmit={seConnecter}>
                 <input
@@ -98,10 +108,14 @@ export default function Accueil({ loaderData }: Route.ComponentProps) {
                 <button type="submit">Se connecter</button>
               </form>
             </>
+          ) : loaderData.connexionGithubDisponible ? (
+            <p>
+              <a href="/auth/github">Se connecter avec GitHub</a>
+            </p>
           ) : (
             <p>
-              La connexion GitHub n'est pas encore configurée. Elle est
-              nécessaire pour jouer en production.
+              La connexion GitHub n'est pas configurée. Renseignez les variables
+              OAuth dans l'environnement du serveur pour pouvoir jouer.
             </p>
           )}
           {erreurConnexion && <p className="erreur">{erreurConnexion}</p>}

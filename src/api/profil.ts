@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { userRepository } from '../repo/user';
+import { userRepository } from '../repository/user';
 
 export const profilRouter = Router();
 

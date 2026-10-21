@@ -1,5 +1,5 @@
-import { GameRow } from '../repo/game';
-import { userRepository } from '../repo/user';
+import { GameRow } from '../repository/game';
+import { userRepository } from '../repository/user';
 
 export type ResultatJoueur = 'victoire' | 'defaite' | 'nulle';
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'node:crypto';
-import { userRepository } from '../repo/user';
+import { userRepository } from '../repository/user';
 
 // Cette route simule une connexion réussie sans passer par GitHub.
 // Elle est réservée au développement et aux tests ; elle ne doit jamais

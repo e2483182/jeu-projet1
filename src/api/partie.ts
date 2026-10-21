@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { gameRepository } from '../repo/game';
+import { gameRepository } from '../repository/game';
 import { vuePartie } from '../partie/vue';
 import { Chess } from 'chess.js';
 import crypto from 'node:crypto';

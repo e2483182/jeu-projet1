@@ -3,7 +3,7 @@ import { Chess } from 'chess.js';
 import { ErreurHttp } from '../erreurHttp';
 import { cloturerPartie } from '../partie/cloture';
 import { vuePartie } from '../partie/vue';
-import { gameRepository } from '../repo/game';
+import { gameRepository } from '../repository/game';
 
 export const moveRouter = Router();
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { gameRepository } from '../repo/game';
-import { userRepository } from '../repo/user';
+import { gameRepository } from '../repository/game';
+import { userRepository } from '../repository/user';
 
 export const joinRouter = Router();
 

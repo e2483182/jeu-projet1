@@ -1,8 +1,8 @@
 import { ErreurHttp } from '../erreurHttp';
 import { mettreAJourClassements, Vainqueur } from '../elo';
-import { gameRepository } from '../repo/game';
-import { userRepository } from '../repo/user';
-import { withTransaction } from '../repo/db';
+import { gameRepository } from '../repository/game';
+import { userRepository } from '../repository/user';
+import { withTransaction } from '../repository/db';
 
 export type StatutFinal = 'WHITE_WON' | 'BLACK_WON' | 'DRAW';
 export type RaisonFin = 'CHECKMATE' | 'STALEMATE' | 'RESIGNATION' | 'DRAW_RULE';

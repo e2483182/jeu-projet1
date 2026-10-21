@@ -21,13 +21,15 @@ partie en interrogeant l'API toutes les deux secondes.
 Prérequis : Node.js 24 ou supérieur.
 
 ```powershell
+Copy-Item .env.example .env
 npm install
 npm run dev
 ```
 
 Ouvrez <http://localhost:3000>. En développement, entrez un nom pour vous
-connecter. Cette connexion factice n'est activée qu'en développement et en
-test ; l'authentification GitHub OAuth réelle n'est pas encore implémentée.
+connecter ; cette connexion factice n'est activée qu'en développement et en
+test. Le flux GitHub OAuth est également disponible si les variables OAuth
+sont configurées dans `.env`.
 Pour lancer les tests d'intégration de l'API :
 
 ```powershell
@@ -44,13 +46,18 @@ Le serveur de déploiement n'a besoin que de Docker avec le plugin Docker
 Compose. Il télécharge une image déjà publiée sur GitHub Container Registry ;
 le fichier Compose ne construit pas l'image.
 
-1. Dans le dépôt, construisez et publiez une image Docker sur GHCR (ou utilisez
-   une image publiée par le pipeline de CI).
+1. Chaque push sur `main` exécute les tests, le contrôle TypeScript et le build.
+   Si ces étapes réussissent, le workflow publie l'image sur GHCR avec les tags
+   `latest` et `sha-<SHA complet>`. Les pull requests vers `main` exécutent les
+   validations sans publier d'image.
 2. Sur la machine de déploiement, placez `deploy/compose.yml` et créez un
    fichier `deploy/.env` à partir de `deploy/.env.example`.
-3. Dans `deploy/.env`, vérifiez `GHCR_OWNER`, `IMAGE_NAME` et `IMAGE_TAG`, puis
-   remplacez `SESSION_SECRET` par une valeur aléatoire longue et unique. Ce
-   fichier n'est pas suivi par Git. Ne partagez pas cette clé.
+3. Dans `deploy/.env`, vérifiez `GHCR_OWNER`, `IMAGE_NAME` et `IMAGE_TAG`,
+   définissez un `SESSION_SECRET` aléatoire long et unique, puis renseignez les
+   identifiants de votre application OAuth GitHub. Enregistrez l'URL de
+   rappel indiquée par `GITHUB_CALLBACK_URL` dans les paramètres de cette
+   application OAuth. Ce fichier n'est pas suivi par Git ; ne partagez pas
+   les secrets.
 4. Si le dépôt d'images est privé, connectez Docker à GHCR avec un jeton ayant
    la permission de lecture de paquets :
 
@@ -78,10 +85,5 @@ docker build -t ghcr.io/e2483182/jeu-projet1:latest .
 docker push ghcr.io/e2483182/jeu-projet1:latest
 ```
 
-### Limitation connue
-
-La connexion GitHub OAuth (récit 1) n'est pas implémentée. En production, la
-connexion factice est désactivée pour empêcher l'usurpation de compte ; la
-page l'indique et le jeu ne peut pas encore être utilisé avant l'ajout du vrai
-flux OAuth. Les variables OAuth ne sont donc pas demandées dans `.env` tant que
-ce flux n'existe pas.
+L'authentification GitHub OAuth est nécessaire en production : les identifiants
+ne sont jamais intégrés à l'image et doivent être fournis dans `deploy/.env`.

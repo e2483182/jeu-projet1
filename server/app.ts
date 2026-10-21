@@ -2,7 +2,7 @@ import { createRequestHandler, type GetLoadContextFunction } from '@react-router
 import { RouterContextProvider } from 'react-router';
 
 import { createApp } from '../src/serveur';
-import { userRepository } from '../src/repo/user';
+import { userRepository } from '../src/repository/user';
 import { utilisateurContext } from '../app/context';
 
 declare module 'react-router' {

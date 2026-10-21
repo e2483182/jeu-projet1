@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import crypto from 'node:crypto';
-import { userRepository } from '../repo/user';
+import { userRepository } from '../repository/user';
 
 export const authRouter = Router();
 
@@ -86,11 +86,4 @@ authRouter.get('/auth/github/callback', async (req: Request, res: Response) => {
   } catch {
     return res.status(502).json({ error: 'Connexion GitHub impossible' });
   }
-});
-
-// Récupérer les infos du joueur connecté (Nom + Elo)
-authRouter.get('/api/me', (req: Request, res: Response) => {
-  if (!req.session?.userId) return res.status(401).json({ error: 'Non connecté' });
-  const user = userRepository.findById(req.session.userId);
-  res.json(user);
 });

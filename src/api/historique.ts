@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { gameRepository } from '../repo/game';
+import { gameRepository } from '../repository/game';
 import { resultatPour, vuePartie } from '../partie/vue';
 
 export const historiqueRouter = Router();

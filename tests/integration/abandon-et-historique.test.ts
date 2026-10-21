@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../../src/serveur';
-import { userRepository } from '../../src/repo/user';
+import { userRepository } from '../../src/repository/user';
 
 async function creerPartieEnCours(
   app: ReturnType<typeof createApp>,
